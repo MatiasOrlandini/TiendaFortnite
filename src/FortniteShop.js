@@ -17,7 +17,8 @@ function FortniteShop() {
       .then(response => response.json())
       .then(data => {
         if (data && data.data && data.data.featured && data.data.featured.entries) {
-          setFeaturedItems(data.data.featured.entries);
+          const filteredItems = data.data.featured.entries.filter(item => item.bundle && item.bundle.name && item.bundle.image);
+          setFeaturedItems(filteredItems);
           console.log("Total de elementos cargados:", data.data.featured.entries.length);
         }
       })
