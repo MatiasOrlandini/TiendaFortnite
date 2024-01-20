@@ -2,14 +2,18 @@ import './App.css';
 import React, { useState, useEffect } from 'react';
 import Pagination from './Pagination';
 import Loading from './Loading';
+import BundleDetailsModal from './BundleDetailsModal';
 import './FortniteShop.css';
+
 
 
 function FortniteShop() {
   const [featuredItems, setFeaturedItems] = useState([]);
+  const [selectedBundle, setSelectedBundle] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -19,7 +23,6 @@ function FortniteShop() {
         if (data && data.data && data.data.featured && data.data.featured.entries) {
           const filteredItems = data.data.featured.entries.filter(item => item.bundle && item.bundle.name && item.bundle.image);
           setFeaturedItems(filteredItems);
-          console.log("Total de elementos cargados:", data.data.featured.entries.length);
         }
       })
       .catch(error => console.error('Error fetching data: ', error))
@@ -38,15 +41,23 @@ function FortniteShop() {
   if (isLoading) {
     return <Loading />;
   }
+  const handleSelectBundle = (bundle, items) => {
+    setSelectedBundle({ ...bundle, items });
+    setIsModalOpen(true); 
+  };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false); 
+  };
   const shouldShowPagination = featuredItems.length > itemsPerPage;
+  
   return (
     <div className="shopStyle">
       <h1>Artículos destacados en la Tienda Fortnite</h1>
       <div>
         {currentItems.map(item => (
           
-          <div key={item.offerId} className="itemStyle">
+          <div key={item.offerId} className="itemStyle" onClick={() => handleSelectBundle(item.bundle, item.items)}>
             <h2>{item.bundle && item.bundle.name ? item.bundle.name : 'No Name'}</h2>
             <p>Regular Price: {item.regularPrice}</p>
             <p>Final Price: {item.finalPrice}</p>
@@ -54,6 +65,9 @@ function FortniteShop() {
           </div>
            )
         )}
+          {isModalOpen && (
+        <BundleDetailsModal bundle={selectedBundle} onClose={handleCloseModal} />
+      )}
       </div>
       {shouldShowPagination && (
       <Pagination 
