@@ -19,6 +19,7 @@
     width: 300px;
     text-align: center;
     background-color: white;  /* Fondo blanco para cada elemento */
+    cursor: pointer;
   }
   
   .imageStyle {
